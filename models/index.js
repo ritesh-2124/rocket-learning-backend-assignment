@@ -6,7 +6,7 @@ const Seats = require("./Seats");
 
 // Sync all models to DB
 const syncDatabase = async () => {
-  await sequelize.sync({ alter: true });
+  await sequelize.sync({ alter: false });
   console.log("All tables synced successfully!");
 };
 
