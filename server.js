@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const { connectDB } = require("./config/database");
+const {clientConnection} = require("./config/redis");
 const { syncDatabase } = require("./models");
 const allRoutes = require("./routes/allRoutes");
 
@@ -15,6 +16,7 @@ app.use("/api", allRoutes);
 const startServer = async () => {
   await connectDB();
   await syncDatabase();
+  await clientConnection();
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 };
 
