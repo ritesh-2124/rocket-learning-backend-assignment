@@ -34,11 +34,11 @@ const Booking = sequelize.define(
   },
   {
     timestamps: true,
-    underscored: true, // Converts camelCase fields to snake_case in DB
+    underscored: true,
   }
 );
 
-// Define associations properly
+// Define associations
 User.hasMany(Booking, { foreignKey: "userId" });
 Booking.belongsTo(User, { foreignKey: "userId" });
 

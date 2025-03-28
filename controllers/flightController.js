@@ -2,8 +2,6 @@ const Flight = require("../models/Flight");
 const Seat = require("../models/Seats");
 const { Op } = require("sequelize");
 const { client } = require("../config/redis");
-
-
 const searchFlights = async (req, res) => {
   try {
     const { source, destination, date, page = 1, pageSize = 10 } = req.query;
@@ -28,6 +26,9 @@ const searchFlights = async (req, res) => {
         source,
         destination,
         date: { [Op.between]: [startDate, endDate] },
+        available_seats: {
+          [Op.gt]: 0,
+        }
       },
       limit: size,
       offset: offset,
