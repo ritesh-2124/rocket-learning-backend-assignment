@@ -51,7 +51,7 @@ const bookFlight =[
     };
     await sendBookingToQueue(flightDetails, userId);
 
-    res.status(201).json({ message: "Flight booked successfully", booking });
+    res.status(201).json({ message: "Flight booked successfully", status:booking.status });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -64,10 +64,8 @@ const getFlightBookings = async (req, res) => {
     const userId = req.user.id; // Extracted from JWT token
     if(!userId) return res.status(400).json({ message: "User ID is required" });
 
-
     const bookings = await Booking.findAll({ where: { id: req.params.id , userId } });
-    if (!bookings) return res.status(404).json({ message: "No bookings found" });
-
+    if (bookings.length == 0) return res.status(404).json({ message: "No bookings found" });
 
     const flight = await Flight.findByPk(bookings[0].dataValues.flightId);
     if (!flight) return res.status(404).json({ message: "Flight not found" });
@@ -91,6 +89,7 @@ const getFlightBookings = async (req, res) => {
 
     res.json({ message: "Bookings fetched successfully", flightDetails });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 };

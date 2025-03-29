@@ -10,7 +10,7 @@ const sqs = new AWS.SQS({
 });
 require('dotenv').config();
 
-const queueURL = process.env.SQS_QUEUE_URL; // Ensure this is set in .env
+const queueURL = process.env.SQS_QUEUE_URL;
 const emailUser = process.env.EMAIL_USER;
 const emailPass = process.env.EMAIL_PASSWORD;
 
@@ -60,12 +60,13 @@ const receiveMessages = async () => {
 
                 for (const message of data.Messages) {
                     const bookingDetails = JSON.parse(message.Body);
-                    
+
                     const mailOptions = {
                         from: emailUser,
                         to: bookingDetails.email,
                         subject: '✈️ Flight Booking Status',
-                        text: `Hello ${bookingDetails.name}, your booking status is ${bookingDetails.flight_status} for flight ${bookingDetails.flight_no} from ${bookingDetails.source} to ${bookingDetails.destination} on ${bookingDetails.date}.`
+                        html: `<p>Hello ${bookingDetails.name},</p>
+                        <p>Your booking status is <strong>${bookingDetails.flight_status}</strong> for flight <strong>${bookingDetails.flight_no}</strong> from <strong>${bookingDetails.source}</strong> to <strong>${bookingDetails.destination}</strong> on <strong>${bookingDetails.date}</strong>.</p>`
                     };
 
                     try {
@@ -77,7 +78,7 @@ const receiveMessages = async () => {
                             QueueUrl: queueURL,
                             ReceiptHandle: message.ReceiptHandle
                         }).promise();
-                        console.log('✅ Processed message deleted from SQS');
+                        console.log('Processed message deleted from SQS');
                     } catch (emailError) {
                         console.error('Error sending email:', emailError);
                     }

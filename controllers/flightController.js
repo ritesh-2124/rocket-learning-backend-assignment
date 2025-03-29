@@ -109,8 +109,7 @@ const addFlight = async (req, res) => {
 
 
     res.status(201).json({
-      message: "Flight added successfully with seats",
-      flight,
+      message: "Flight added successfully with seats"
     });
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -130,7 +129,7 @@ const updateFlight = async (req, res) => {
   
       await flight.update(req.body);
   
-      res.json({ message: "Flight updated successfully", flight });
+      res.json({ message: "Flight updated successfully" });
     } catch (error) {
       res.status(400).json({ message: error.message });
     }
@@ -187,7 +186,7 @@ const updateFlight = async (req, res) => {
         await sendBookingToQueue(flightDetails, user.userId);
       }
 
-      res.json({ message: "Flight rescheduled successfully", flight });
+      res.json({ message: "Flight rescheduled successfully" });
     } catch (error) {
       res.status(400).json({ message: error.message });
     }
@@ -195,7 +194,6 @@ const updateFlight = async (req, res) => {
 
 
   const deleteFlightCache = async (source, destination, date) => {
-    console.log("Deleting cache for flights");
     const pattern = `flights:${source}:${destination}:${date}*`;
     const keys = await client.keys(pattern);
     console.log(`Found cache keys: ${keys}`);
