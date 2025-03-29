@@ -1,7 +1,8 @@
-const Flight = require("../models/Flight");
-const Seat = require("../models/Seats");
-const Booking = require("../models/Booking");
-const User = require("../models/User");
+const { sequelize } = require("../config/database");
+const Flight = require("../models/Flight")(sequelize);
+const User = require("../models/User")(sequelize);
+const Booking = require("../models/Booking")(sequelize, User, Flight);
+const Seats = require("../models/Seats")(sequelize , Flight);
 const { sendBookingToQueue } = require("../services/emailService");
 const { Op } = require("sequelize");
 const { client } = require("../config/redis");
@@ -66,7 +67,7 @@ const getAvailableSeats = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const seats = await Seat.findAll({
+    const seats = await Seats.findAll({
       where: { flight_id: id , is_booked : false},
     });
 
@@ -102,13 +103,14 @@ const addFlight = async (req, res) => {
       });
     }
 
-    await Seat.bulkCreate(seats);
+    await Seats.bulkCreate(seats);
 
 
     await deleteFlightCache(source, destination, date);
 
 
     res.status(201).json({
+      id: flight.id,
       message: "Flight added successfully with seats"
     });
   } catch (error) {

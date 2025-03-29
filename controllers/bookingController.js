@@ -1,8 +1,9 @@
-const Booking = require("../models/Booking");
-const Flight = require("../models/Flight");
-const User = require("../models/User");
+const { sequelize } = require("../config/database");
+const Flight = require("../models/Flight")(sequelize);
+const User = require("../models/User")(sequelize);
+const Booking = require("../models/Booking")(sequelize, User, Flight);
 const { body, validationResult } = require("express-validator");
-const Seats = require("../models/Seats");
+const Seats = require("../models/Seats")(sequelize , Flight);
 const {sendBookingToQueue} = require("../services/emailService");
 
 const bookFlight =[ 
