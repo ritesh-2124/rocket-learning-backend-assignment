@@ -28,8 +28,12 @@ const Booking = sequelize.define(
       },
     },
     seatsBooked: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
+    },
+    status: {
+      type: DataTypes.ENUM("booked", "cancelled" ,"rescheduled"),
+      defaultValue: "booked",
     },
   },
   {

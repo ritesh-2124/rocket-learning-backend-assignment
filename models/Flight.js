@@ -8,6 +8,8 @@ const Flight = sequelize.define("Flight", {
   source: { type: DataTypes.STRING, allowNull: false },
   destination: { type: DataTypes.STRING, allowNull: false },
   date: { type: DataTypes.DATE, allowNull: false },
+  departure_time: { type: DataTypes.TIME, allowNull: false },
+  arrival_time: { type: DataTypes.TIME, allowNull: false },
   total_seats: { type: DataTypes.INTEGER, allowNull: false },
   available_seats: { type: DataTypes.INTEGER, allowNull: false },
   price: { type: DataTypes.FLOAT, allowNull: false },
