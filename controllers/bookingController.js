@@ -17,8 +17,7 @@ const bookFlight =[
     }
 
     const { flightId, seatsBooked } = req.body;
-    const userId = req.user.id; // Extracted from JWT token
-
+    const userId = req.user.id;
     const flight = await Flight.findByPk(flightId);
     if (!flight) return res.status(404).json({ message: "Flight not found" });
 
@@ -52,7 +51,7 @@ const bookFlight =[
     };
     await sendBookingToQueue(flightDetails, userId);
 
-    res.status(201).json({ message: "Flight booked successfully", status:booking.status });
+    res.status(201).json({ message: "Flight booked successfully", status:booking.status , id: booking.id });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
