@@ -122,6 +122,12 @@ Using **MySQL (Sequelize)**;
 ## 🎯 Bonus Features
 - **Unit & Integration Tests** used Mocha and Chai.
 
+## 🎯 Future Enhancements
+
+- **Payment Gateway**: Razorpay/Stripe for secure transactions.
+- **Advanced Filters**: Price range, airline, duration, direct/connecting flights.
+- can add more testcases
+
 ## ✅ Deliverables
 - **GitHub Repo** with structured code.
 - **README.md** with setup instructions.
