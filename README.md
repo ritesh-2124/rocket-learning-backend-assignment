@@ -9,7 +9,8 @@ This is a **Flight Booking System** built using **Node.js**, **Express.js**, and
 
 API Base URL: [Rocket Learning Backend](https://rocket-learning-backend-assignment.onrender.com/api/)(https://rocket-learning-backend-assignment.onrender.com/api/)
 
-## Additionally, I have attached the .env file with the assignment Email
+## 🔴 Additionally, I have attached the `.env` file with the assignment Email
+
 
 ### 1️⃣ User Authentication
 - Users can **sign up and log in** using **JWT authentication**.
