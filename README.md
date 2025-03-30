@@ -5,6 +5,8 @@ This is a **Flight Booking System** built using **Node.js**, **Express.js**, and
 
 ## 📌 Features
 
+✅ **Covered all the features that are asked in the assignment with a bonus features **
+
 🌍 Deployed URL
 
 API Base URL: [Rocket Learning Backend](https://rocket-learning-backend-assignment.onrender.com/api/)(https://rocket-learning-backend-assignment.onrender.com/api/)
