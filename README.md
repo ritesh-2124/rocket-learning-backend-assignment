@@ -5,6 +5,10 @@ This is a **Flight Booking System** built using **Node.js**, **Express.js**, and
 
 ## 📌 Features
 
+🌍 Deployed URL
+
+API Base URL: [Rocket Learning Backend](https://rocket-learning-backend-assignment.onrender.com/api/)(https://rocket-learning-backend-assignment.onrender.com/api/)
+
 ### 1️⃣ User Authentication
 - Users can **sign up and log in** using **JWT authentication**.
 - Implements **role-based access control (RBAC)** for admin and regular users.
