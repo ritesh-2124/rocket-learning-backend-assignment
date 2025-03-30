@@ -1,0 +1,448 @@
+{
+	"info": {
+		"_postman_id": "1de681d8-97f7-499e-9605-bb532f05c666",
+		"name": "rocket learning",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30646161"
+	},
+	"item": [
+		{
+			"name": "register user",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"ritesh\",\n    \"email\": \"ritesh@example.com\",\n    \"password\": \"password\",\n    \"role\": \"admin\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{rocket-learning}}api/users/register",
+					"host": [
+						"{{rocket-learning}}api"
+					],
+					"path": [
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user login",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzQzMjUyMjk0LCJleHAiOjE3NDMyNTU4OTR9.ixH5ssG1S8rJwJNnTu3RqIpz8PRebIyfUIEY1hvlDQY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"ritesh@example.com\",\n    \"password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{rocket-learning}}api/users/login",
+					"host": [
+						"{{rocket-learning}}api"
+					],
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create flights (admin only)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzQzMjgxMTI2LCJleHAiOjE3NDMyODQ3MjZ9._73Sqpjo6LkDr3DN9Nu6BWAoxejg68ucaAi_CfdOvVM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzQzMjUyMjk0LCJleHAiOjE3NDMyNTU4OTR9.ixH5ssG1S8rJwJNnTu3RqIpz8PRebIyfUIEY1hvlDQY"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"airline\": \"Indigo\",\n    \"flight_no\": \"456G33\",\n    \"source\": \"Kota\",\n    \"destination\": \"delhi\",\n    \"date\": \"2025-05-01\",\n    \"departure_time\": \"10:30 AM\",\n    \"arrival_time\": \"12:45 PM\",\n    \"total_seats\": 20,\n    \"price\": 3000\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{rocket-learning}}api/flights",
+					"host": [
+						"{{rocket-learning}}api"
+					],
+					"path": [
+						"flights"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update flights (admin only)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzQzMjU2OTc1LCJleHAiOjE3NDMyNjA1NzV9.Nlz4CZSYD_TQP0sYEA9YydJG7k7hAwGPSqTn1GxmOlA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"source\": \"kota\",\n    \"destination\": \"mumbai\",\n    \"date\": \"2025-06-01 12:00:00\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{rocket-learning}}api/flights/1",
+					"host": [
+						"{{rocket-learning}}api"
+					],
+					"path": [
+						"flights",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delate flights (admin only)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdlZjY2OTBiLWMzMGItNGE2Ny04Y2Y2LWQ0ODNmMmNhNzZmZSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc0MzE1MzU0MiwiZXhwIjoxNzQzMTU3MTQyfQ.62kDlCKqLUrufH1RgI8n6h7QcbEYzYSBjxwojiUKkx8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{rocket-learning}}api/flights/10",
+					"host": [
+						"{{rocket-learning}}api"
+					],
+					"path": [
+						"flights",
+						"10"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get flights",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzQzMTcwMDg4LCJleHAiOjE3NDMxNzM2ODh9.3ydGjFiyhnL09jdv9DwYcxMOp1Ym25BedG_teuHWDCQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{rocket-learning}}api/flights?source=kota&destination=mumbai&date=2025-05-14&pageSize=5",
+					"host": [
+						"{{rocket-learning}}api"
+					],
+					"path": [
+						"flights"
+					],
+					"query": [
+						{
+							"key": "source",
+							"value": "kota"
+						},
+						{
+							"key": "destination",
+							"value": "mumbai"
+						},
+						{
+							"key": "date",
+							"value": "2025-05-14"
+						},
+						{
+							"key": "pageSize",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get Available Seats",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdlZjY2OTBiLWMzMGItNGE2Ny04Y2Y2LWQ0ODNmMmNhNzZmZSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc0MzE0NzQ0NywiZXhwIjoxNzQzMTUxMDQ3fQ.shFeFY1djKMJtz98uPAb6i-LTutgwDytNYMsN-5Jc3w"
+					}
+				],
+				"url": {
+					"raw": "{{rocket-learning}}api/flights/getAvailableSeats/1",
+					"host": [
+						"{{rocket-learning}}api"
+					],
+					"path": [
+						"flights",
+						"getAvailableSeats",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ticket booking",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzQzMzM4OTMxLCJleHAiOjE3NDMzNDI1MzF9.Y2I3lOza89dWnZSeNTqdRQuK1Q8Nvmd8rsQxC35kCpI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"flightId\": 1,\n    \"seatsBooked\": 13\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{rocket-learning}}api/bookings",
+					"host": [
+						"{{rocket-learning}}api"
+					],
+					"path": [
+						"bookings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get booking by booking id",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDMyNzU1MzksImV4cCI6MTc0MzI3OTEzOX0.kpCZDK0GKRDeFoXFOncNDWbVEXpPQdJMfIGtBuBwX7A",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDMyNTE4MzksImV4cCI6MTc0MzI1NTQzOX0.wGy9tpUu-iteMFVbVry4TlE5Bdz9VRDeHkTohSla6Nc"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{rocket-learning}}api/bookings/5",
+					"host": [
+						"{{rocket-learning}}api"
+					],
+					"path": [
+						"bookings",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cancel booking",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDMyNTE4MzksImV4cCI6MTc0MzI1NTQzOX0.wGy9tpUu-iteMFVbVry4TlE5Bdz9VRDeHkTohSla6Nc"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \n    \"seatsBooked\": 8\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{rocket-learning}}api/bookings/cancel/5",
+					"host": [
+						"{{rocket-learning}}api"
+					],
+					"path": [
+						"bookings",
+						"cancel",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "reschedule flight (admin only)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzQzMjU4MTA3LCJleHAiOjE3NDMyNjE3MDd9.wSthgzNFOah1vcFRiD-iSNNlOsVsnXBQ9HnTu5I56PU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDMyNTE4MzksImV4cCI6MTc0MzI1NTQzOX0.wGy9tpUu-iteMFVbVry4TlE5Bdz9VRDeHkTohSla6Nc"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n \"date\" :\"2025-05-14\",\n \"departure_time\":\"01:32 AM\",\n \"arrival_time\" :\"03:10 AM\"\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{rocket-learning}}api/flights/reschedule/1",
+					"host": [
+						"{{rocket-learning}}api"
+					],
+					"path": [
+						"flights",
+						"reschedule",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
