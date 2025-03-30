@@ -45,6 +45,7 @@ Using **MySQL (Sequelize)**;
 - **Email Service**: Nodemailer
 - **API**: REST API
 - **Testing**: Chai with Mocha
+- **Deployment** : Render , aws
 
 ## 🛠 Project Setup
 
@@ -73,22 +74,22 @@ Using **MySQL (Sequelize)**;
    DB_PORT
    DB_HOST
    JWT_SECRET
-   NODE_ENV="test" 
+   NODE_ENV="test"
    # this is only when want to run testcase for sqlite 
 
-# Redis config
-REDIS_USERNAME
-REDIS_HOST
-REDIS_PORT
-REDIS_PASSWORD
+   # Redis config
+   REDIS_USERNAME
+   REDIS_HOST
+   REDIS_PORT
+   REDIS_PASSWORD
 
-# AWS config
-AWS_ACCESS_KEY_ID
-AWS_SECRET_ACCESS_KEY
-AWS_REGION
-SQS_QUEUE_URL
-EMAIL_USER
-EMAIL_PASSWORD
+   # AWS config
+   AWS_ACCESS_KEY_ID
+   AWS_SECRET_ACCESS_KEY
+   AWS_REGION
+   SQS_QUEUE_URL
+   EMAIL_USER
+   EMAIL_PASSWORD
    ```
 4. Start the server:
    ```bash
