@@ -126,6 +126,7 @@ Using **MySQL (Sequelize)**;
 
 - **Payment Gateway**: Razorpay/Stripe for secure transactions.
 - **Advanced Filters**: Price range, airline, duration, direct/connecting flights.
+- **GraphQL API** for flexible querying
 - can add more testcases
 
 ## ✅ Deliverables
