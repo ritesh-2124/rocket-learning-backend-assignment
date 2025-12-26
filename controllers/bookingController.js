@@ -1,137 +1,234 @@
-const { sequelize } = require("../config/database");
-const Flight = require("../models/Flight")(sequelize);
-const User = require("../models/User")(sequelize);
-const Booking = require("../models/Booking")(sequelize, User, Flight);
 const { body, validationResult } = require("express-validator");
-const Seats = require("../models/Seats")(sequelize , Flight);
-const {sendBookingToQueue} = require("../services/emailService");
+const { User, Flight, Booking, Seats, sequelize } = require("../models");
+const { sendBookingToQueue } = require("../services/emailService");
 
-const bookFlight =[ 
+/**
+ * BOOK FLIGHT
+ */
+const bookFlight = [
   body("flightId").notEmpty().withMessage("Flight ID is required"),
   body("seatsBooked").notEmpty().withMessage("Seats booked is required"),
+
   async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+    const t = await sequelize.transaction();
+
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        await t.rollback();
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const { flightId, seatsBooked } = req.body;
+      const userId = req.user.id;
+
+      const flight = await Flight.findByPk(flightId, { transaction: t });
+      if (!flight) {
+        await t.rollback();
+        return res.status(404).json({ message: "Flight not found" });
+      }
+
+      if (flight.available_seats <= 0) {
+        await t.rollback();
+        return res.status(400).json({ message: "Not enough available seats" });
+      }
+
+      const seat = await Seats.findOne({
+        where: { id: seatsBooked, is_booked: 0 },
+        transaction: t,
+      });
+
+      if (!seat) {
+        await t.rollback();
+        return res
+          .status(400)
+          .json({ message: "Selected seat is already booked" });
+      }
+
+      // Update seat + flight
+      await seat.update({ is_booked: 1 }, { transaction: t });
+      await flight.update(
+        { available_seats: flight.available_seats - 1 },
+        { transaction: t }
+      );
+
+      // Create booking
+      const booking = await Booking.create(
+        { userId, flightId, seatsBooked },
+        { transaction: t }
+      );
+
+      await t.commit();
+
+      const user = await User.findByPk(userId);
+
+      await sendBookingToQueue(
+        {
+          name: user.name,
+          email: user.email,
+          flight_no: flight.flight_no,
+          source: flight.source,
+          destination: flight.destination,
+          date: flight.date,
+          seatsBooked: seat.seat_number,
+          flight_status: booking.status,
+        },
+        userId
+      );
+
+      res.status(201).json({
+        message: "Flight booked successfully",
+        status: booking.status,
+        bookingId: booking.id,
+      });
+    } catch (error) {
+      await t.rollback();
+      console.error(error);
+      res.status(500).json({ message: error.message });
     }
+  },
+];
 
-    const { flightId, seatsBooked } = req.body;
-    const userId = req.user.id;
-    const flight = await Flight.findByPk(flightId);
-    if (!flight) return res.status(404).json({ message: "Flight not found" });
-
-    if (flight.available_seats == 0) {
-      return res.status(400).json({ message: "Not enough available seats" });
-    }
-    const seats = await Seats.findAll({ where: { id: seatsBooked  , is_booked: 1} });
-    if(seats.length > 0){
-      return res.status(400).json({ message: "Selected seats are already booked" });
-    }
-
-    flight.available_seats = flight.available_seats - 1;
-    await flight.save();
-
-    // Store booking details
-    const booking = await Booking.create({ userId, flightId, seatsBooked });
-    const updateSeat = await Seats.update(
-      { is_booked: 1 },
-      { where: { id: seatsBooked } }
-    );
-    const user = await User.findByPk(userId);
-    let flightDetails = {
-      name: user.name,
-      flight_no: flight.flight_no,
-      source: flight.source,
-      destination: flight.destination,
-      date: flight.date,
-      seatsBooked: seats.seat_number,
-      email: user.email,
-      flight_status: booking.status,
-    };
-    await sendBookingToQueue(flightDetails, userId);
-
-    res.status(201).json({ message: "Flight booked successfully", status:booking.status , id: booking.id });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-}
-]
-
+/**
+ * GET SINGLE BOOKING (BY ID)
+ */
 const getFlightBookings = async (req, res) => {
   try {
+    const userId = req.user.id;
+    const bookingId = req.params.id;
 
-    const userId = req.user.id; // Extracted from JWT token
-    if(!userId) return res.status(400).json({ message: "User ID is required" });
+    const booking = await Booking.findOne({
+      where: { id: bookingId, userId },
+      include: [
+        {
+          model: Flight,
+          attributes: ["flight_no", "source", "destination", "date"],
+        },
+        {
+          model: Seats,
+          as: "seat",
+          attributes: ["seat_number"],
+        },
+      ],
+    });
 
-    const bookings = await Booking.findAll({ where: { id: req.params.id , userId } });
-    if (bookings.length == 0) return res.status(404).json({ message: "No bookings found" });
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
 
-    const flight = await Flight.findByPk(bookings[0].dataValues.flightId);
-    if (!flight) return res.status(404).json({ message: "Flight not found" });
-
-
-    const seat = await Seats.findByPk(bookings[0].dataValues.seatsBooked);
-    if (!seat) return res.status(404).json({ message: "Seat not found" });
-
-    const user = await User.findByPk(userId);
-    let flightDetails = {
-      name: user.name,
-      email: user.email,
-      flight_no: flight.flight_no,
-      source: flight.source,
-      destination: flight.destination,
-      date: flight.date,
-      seatsBooked: seat.seat_number,
-      flight_status: bookings[0].dataValues.status,
-    };
-
-
-    res.json({ message: "Bookings fetched successfully", flightDetails });
+    res.json({
+      message: "Booking fetched successfully",
+      booking: {
+        bookingId: booking.id,
+        status: booking.status,
+        flight: booking.Flight,
+        seat: booking.seat.seat_number,
+      },
+    });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
 
-
+/**
+ * CANCEL BOOKING
+ */
 const cancelBooking = async (req, res) => {
+  const t = await sequelize.transaction();
+
   try {
-    const { id } = req.params;
-    const booking = await Booking.findByPk(id);
-    if (!booking) return res.status(404).json({ message: "Booking not found" });
+    const booking = await Booking.findByPk(req.params.id, { transaction: t });
+    if (!booking) {
+      await t.rollback();
+      return res.status(404).json({ message: "Booking not found" });
+    }
 
-    const flight = await Flight.findByPk(booking.flightId);
-    if (!flight) return res.status(404).json({ message: "Flight not found" });
+    const flight = await Flight.findByPk(booking.flightId, { transaction: t });
+    const seat = await Seats.findByPk(booking.seatsBooked, {
+      transaction: t,
+    });
 
-    flight.available_seats = flight.available_seats + 1;
-    await flight.save();
-
-    await booking.update({ status: "cancelled" });
-    await Seats.update(
-      { is_booked: 0 },
-      { where: { id: booking.seatsBooked } }
+    await seat.update({ is_booked: 0 }, { transaction: t });
+    await flight.update(
+      { available_seats: flight.available_seats + 1 },
+      { transaction: t }
     );
+    await booking.update({ status: "cancelled" }, { transaction: t });
+
+    await t.commit();
 
     const user = await User.findByPk(booking.userId);
-    let flightDetails = {
-      name: user.name,
-      email: user.email,
-      flight_no: flight.flight_no,
-      source: flight.source,
-      destination: flight.destination,
-      date: flight.date,
-      seatsBooked: booking.seatsBooked,
-      flight_status: "cancelled",
-    };
-    await sendBookingToQueue(flightDetails, booking.userId);
+
+    await sendBookingToQueue(
+      {
+        name: user.name,
+        email: user.email,
+        flight_no: flight.flight_no,
+        source: flight.source,
+        destination: flight.destination,
+        date: flight.date,
+        seatsBooked: seat.seat_number,
+        flight_status: "cancelled",
+      },
+      booking.userId
+    );
 
     res.json({ message: "Booking canceled successfully" });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    await t.rollback();
+    console.error(error);
+    res.status(500).json({ message: error.message });
   }
 };
 
+/**
+ * GET ALL BOOKINGS OF LOGGED-IN USER
+ */
+const getAllUserBookings = async (req, res) => {
+  try {
+    const userId = req.user.id;
 
+    const bookings = await Booking.findAll({
+      where: { userId },
+      include: [
+        {
+          model: Flight,
+          attributes: ["flight_no", "source", "destination", "date", "price"],
+        },
+        {
+          model: Seats,
+          as: "seat",
+          attributes: ["seat_number"],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
 
-module.exports = { bookFlight ,getFlightBookings  ,cancelBooking};
+    if (!bookings.length) {
+      return res.status(404).json({ message: "No bookings found" });
+    }
+
+    res.json({
+      message: "User bookings fetched successfully",
+      totalBookings: bookings.length,
+      bookings: bookings.map((b) => ({
+        bookingId: b.id,
+        status: b.status,
+        bookedAt: b.createdAt,
+        flight: b.Flight,
+        seat: b.seat.seat_number,
+      })),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  bookFlight,
+  getFlightBookings,
+  cancelBooking,
+  getAllUserBookings,
+};

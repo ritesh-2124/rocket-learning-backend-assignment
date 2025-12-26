@@ -68,7 +68,7 @@ const getAvailableSeats = async (req, res) => {
     const { id } = req.params;
 
     const seats = await Seats.findAll({
-      where: { flight_id: id , is_booked : false},
+      where: { flight_id: id},
     });
 
     res.json(seats);

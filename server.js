@@ -4,11 +4,17 @@ const { connectDB } = require("./config/database");
 const {clientConnection} = require("./config/redis");
 const { syncDatabase } = require("./models");
 const allRoutes = require("./routes/allRoutes");
+const cors = require("cors");
+
 
 const app = express();
 app.use(express.json());
 
-const PORT = process.env.PORT || 5000;
+// Middleware
+app.use(cors());
+
+
+const PORT = process.env.PORT || 5055;
 
 app.use("/api", allRoutes);
 

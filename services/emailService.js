@@ -26,11 +26,10 @@ const transporter = nodemailer.createTransport({
 //Function to Send Messages to SQS Queue
 const sendBookingToQueue = async (bookingDetails, userId) => {
     const params = {
-        QueueUrl: queueURL,
-        MessageBody: JSON.stringify(bookingDetails),
-        MessageGroupId: `user_${userId}`,
-        MessageDeduplicationId: `${userId}-${Date.now()}`
-    };
+  QueueUrl: queueURL,
+  MessageBody: JSON.stringify(bookingDetails)
+};
+
 
     try {
         const data = await sqs.sendMessage(params).promise();
