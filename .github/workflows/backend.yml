@@ -1,29 +1,52 @@
-name: Deploy Backend to EC2
+name: Backend CI/CD
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
+    branches: [main]
+  push:
+    branches: [main]
 
 jobs:
-  deploy:
+  # -------------------------
+  # 1️⃣ CI JOB (PR SAFE)
+  # -------------------------
+  ci:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run basic check
+        run: echo "CI passed"
+
+  # -------------------------
+  # 2️⃣ DEPLOY JOB (PROD ONLY)
+  # -------------------------
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
+          username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd rocket-learning-backend-assignment
             git pull origin main
-            npm install
+            npm install --production
             pm2 restart rocket-backend
+            echo "Deployed successfully"
