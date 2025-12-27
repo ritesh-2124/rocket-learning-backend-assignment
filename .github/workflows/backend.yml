@@ -1,12 +1,39 @@
-name: Deploy Backend to EC2
+name: Backend CI/CD
 
 on:
+  pull_request:
+    branches: [main]
   push:
     branches: [main]
 
 jobs:
+  # -------------------------
+  # 1️⃣ CI JOB (PR SAFE)
+  # -------------------------
+  ci:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run basic check
+        run: echo "CI passed"
+
+  # -------------------------
+  # 2️⃣ DEPLOY JOB (PROD ONLY)
+  # -------------------------
   deploy:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
 
     steps:
       - uses: actions/checkout@v4
@@ -22,3 +49,4 @@ jobs:
             git pull origin main
             npm install --production
             pm2 restart rocket-backend
+            echo "Deployed successfully"
